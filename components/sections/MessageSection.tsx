@@ -12,6 +12,8 @@ interface Props {
 }
 
 export function MessageSection({ messages }: Props) {
+  const message = messages?.[0] ?? null; // Assuming we want to display the first message. Adjust as needed.
+  if (!message) return null;
   return (
     <section
       id="message"
@@ -33,7 +35,9 @@ export function MessageSection({ messages }: Props) {
             <div className="relative group">
               <div className="relative rounded-2xl overflow-hidden shadow-xl shadow-primary/10">
                 <Image
+
                   src={
+                    message?.image ||
                     "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=600&q=80"
                   }
                   alt={"Image"}
@@ -46,9 +50,9 @@ export function MessageSection({ messages }: Props) {
                 <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6">
                   <div className="bg-white/90 backdrop-blur-sm rounded-xl px-4 py-3 shadow-lg inline-flex flex-col">
                     <span className="text-sm font-bold text-primary leading-tight">
-                      kritam dahal
+                      {message?.staff_name}
                     </span>
-                    <span className="text-xs text-text-muted">Principal</span>
+                    <span className="text-xs text-text-muted">{message?.designation}</span>
                   </div>
                 </div>
               </div>
@@ -67,18 +71,18 @@ export function MessageSection({ messages }: Props) {
             <div className="flex items-center gap-3">
               <div className="w-12 h-[2px] bg-accent" />
               <span className="text-xs font-bold tracking-[0.2em] uppercase text-accent">
-                Message From Father
+               {message?.date || message?.tenure || "Message"}
               </span>
             </div>
 
             <h2 className="font-display text-2xl font-bold text-primary sm:text-3xl lg:text-4xl xl:text-5xl leading-tight">
-              A Message of Inspiration and Guidance
+              {message?.title || "A Message from Our Leadership"}
             </h2>
 
             <div className="relative">
               <Quote size={36} className="text-accent/20 mb-2 fill-accent/10" />
               <div className="text-gray-600 leading-relaxed text-sm sm:text-base lg:text-lg">
-                <Preview value="Your message content here..." />
+                <Preview value={message?.content || "Your message content here..."  } />
               </div>
             </div>
           </motion.div>
