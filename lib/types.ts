@@ -292,7 +292,10 @@ export type OtherOrganization = Organization;
 export interface BlogItem {
   id: number;
   title: string;
-  description: string;
+  summary: string;
+  location: string;
+  end_date:string
+  is_home: boolean;
   name: string;
   image: string | null;
   start_date: string;
