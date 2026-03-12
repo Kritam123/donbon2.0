@@ -176,8 +176,6 @@ export type NewsNoticeCategory = "News" | "Notice";
 
 import { data } from "framer-motion/client";
 import { StaticImageData } from "next/image";
-import { NewsApiResponse } from "./data/news-notices/news";
-import { NoticeApiItem } from "./data/news-notices/notices";
 
 export interface NoticeItem {
   id: number;
@@ -344,7 +342,7 @@ export interface AlbumsApiResponse {
 }
 
 export interface NoticeApiResponse {
-  data: NoticeApiItem[];
+  data: any[];
   total: number;
   per_page: number;
   current_page: number;
@@ -354,3 +352,60 @@ export interface NoticeApiResponse {
   count: number;
 }
 export interface NewsNoticeItem {}
+export interface MessageApiItem {
+  id: number;
+  title: string;
+  content: string;
+  "staff-name": string;
+  designation: string;
+  image: string | null;
+  date: string | null;
+  tenure: string | null;
+}
+export interface MessageApiResponse {
+  data: MessageApiItem[];
+  total: number;
+  per_page: number;
+  current_page: number;
+  last_page: number;
+  start: number;
+  offset: number;
+  count: number;
+}
+
+// API Response types
+export interface NoticeApiItem {
+  id: number;
+  title: string;
+  description: string;
+  image: string | null; // Add image field
+  attachment: string | null;
+  priority: "high" | "medium" | "low";
+  date: string;
+  isNew: boolean;
+  catagory: string;
+  slug: string;
+}
+
+export interface NewsApiResponse {
+  data: NewsItem[];
+  total: number;
+  per_page: number;
+  current_page: number;
+  last_page: number;
+  start: number;
+  offset: number;
+  count: number;
+}
+
+// API Response type
+export interface FaqApiResponse {
+  data: Faq[];
+  total: number;
+  per_page: number;
+  current_page: number;
+  last_page: number;
+  start: number;
+  offset: number;
+  count: number;
+}
