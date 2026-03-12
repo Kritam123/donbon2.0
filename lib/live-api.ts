@@ -12,12 +12,44 @@ import {
   NoticeApiItem,
   NoticeApiResponse,
 } from "./types";
+
 import defaultNoticeImg from "@/public/notice.png";
-// ── Donbosco Data ──
-export async function getHeroSlides(): Promise<HeroSlide[]> {
-  const data = await api.get("/heros");
-  return data.data.data;
+
+// ─────────────────────────────────────────────
+// Safe API Wrapper
+// ─────────────────────────────────────────────
+async function safeApiRequest<T>(
+  request: Promise<any>,
+  fallback: T,
+): Promise<T> {
+  try {
+    const response = await request;
+    return response?.data ?? fallback;
+  } catch (error: any) {
+    console.error("API ERROR:", {
+      message: error?.message,
+      status: error?.response?.status,
+      data: error?.response?.data,
+    });
+
+    return fallback;
+  }
 }
+
+// ─────────────────────────────────────────────
+// HERO SLIDES
+// ─────────────────────────────────────────────
+export async function getHeroSlides(): Promise<HeroSlide[]> {
+  const data = await safeApiRequest<{ data: HeroSlide[] }>(api.get("/heros"), {
+    data: [],
+  });
+
+  return data?.data ?? [];
+}
+
+// ─────────────────────────────────────────────
+// MESSAGES
+// ─────────────────────────────────────────────
 function transformToMessage(item: MessageApiItem): Message {
   return {
     id: item.id,
@@ -30,47 +62,50 @@ function transformToMessage(item: MessageApiItem): Message {
     tenure: item.tenure || undefined,
   };
 }
+
 export async function getMessages(schoolId: number): Promise<Message[]> {
   const endpoint = `/messages/${schoolId}`;
-  const fullUrl = `${process.env.NEXT_PUBLIC_API_URL}${endpoint}`;
-  try {
-    const response = await api.get<MessageApiResponse>(endpoint);
-    const msgs = response.data.data;
-    console.log(`[fetchMessages] ✅ Fetched ${msgs} messages from ${fullUrl}`);
-    return msgs?.map(transformToMessage) ?? [];
-  } catch (error: any) {
-    console.error(`[fetchMessages] ❌ Failed to fetch from ${fullUrl}`);
-    if (error.response) {
-      console.error(
-        `[fetchMessages] HTTP Error ${error.response.status}: ${error.response.statusText}`,
-      );
-    } else if (error.request) {
-      console.error(`[fetchMessages] Network Error: No response received`);
-    } else {
-      console.error(`[fetchMessages] Error:`, error.message);
-    }
-    return [];
-  }
+
+  const data = await safeApiRequest<MessageApiResponse>(api.get(endpoint), {
+    data: [],
+    total: 0,
+    per_page: 0,
+    current_page: 0,
+    last_page: 0,
+    start: 0,
+    offset: 0,
+    count: 0,
+  });
+
+  return data?.data?.map(transformToMessage) ?? [];
 }
 
+// ─────────────────────────────────────────────
+// HOME MISSION
+// ─────────────────────────────────────────────
 export async function getHomeMission(): Promise<HomeArrayMission> {
-  const data = await api.get("/homemissions");
-  return data.data;
+  const data = await safeApiRequest<HomeArrayMission>(
+    api.get("/homemissions"),
+    {} as HomeArrayMission,
+  );
+
+  return data;
 }
 
+// ─────────────────────────────────────────────
+// NOTICE TRANSFORMER
+// ─────────────────────────────────────────────
 function transformNoticeApiToNotice(
   apiNotices: NoticeApiItem[],
 ): NoticeApiItem[] {
-  // Consider notices from the last 7 days as "new"
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
   return (
     apiNotices?.map((item) => {
-      // Try to parse the date safely
       let noticeDate = new Date(item.date);
+
       if (isNaN(noticeDate.getTime())) {
-        // Handle "16 Feb, 2026" format manually if needed, or fallback
         noticeDate = new Date();
       }
 
@@ -80,7 +115,7 @@ function transformNoticeApiToNotice(
         id: item.id,
         title: item.title,
         description: item.description,
-        image: item.image, // Map image from API
+        image: item.image,
         attachment: item.attachment,
         priority: item.priority,
         date: item.date,
@@ -92,54 +127,44 @@ function transformNoticeApiToNotice(
   );
 }
 
+// ─────────────────────────────────────────────
+// FETCH NOTICES
+// ─────────────────────────────────────────────
 export async function fetchCNINotices(): Promise<NoticeApiResponse> {
-  try {
-    const url = "/notices";
+  const fallback = {
+    data: [],
+    total: 0,
+    per_page: 10,
+    current_page: 1,
+    last_page: 1,
+    start: 1,
+    offset: 0,
+    count: 0,
+  };
 
-    const response = await api.get<NoticeApiResponse>(url);
+  const data = await safeApiRequest<NoticeApiResponse>(
+    api.get("/notices"),
+    fallback,
+  );
 
-    return {
-      data: transformNoticeApiToNotice(response.data.data),
-      total: response.data.total,
-      per_page: response.data.per_page,
-      current_page: response.data.current_page,
-      last_page: response.data.last_page,
-      start: response.data.start,
-      offset: response.data.offset,
-      count: response.data.count,
-    };
-  } catch (error: any) {
-    console.error("[fetchCNINotices] Failed:", {
-      message: error.message,
-      status: error.response?.status,
-      data: error.response?.data,
-    });
-    return {
-      data: [],
-      total: 0,
-      per_page: 10,
-      current_page: 1,
-      last_page: 1,
-      start: 1,
-      offset: 0,
-      count: 0,
-    };
-  }
+  return {
+    ...data,
+    data: transformNoticeApiToNotice(data?.data ?? []),
+  };
 }
+
 export async function getNotices() {
   const data = await fetchCNINotices();
+
   return data?.data?.map((item) => ({
     ...item,
     image: item.image || defaultNoticeImg,
   }));
 }
 
-// ── News & Notices ──
-export async function getNews() {
-  const data = await fetchCNINews();
-  return data;
-}
-
+// ─────────────────────────────────────────────
+// NEWS
+// ─────────────────────────────────────────────
 function transformNewsApiToNewsItem(apiNews: NewsItem[]) {
   return (
     apiNews?.map((item) => ({
@@ -155,65 +180,50 @@ function transformNewsApiToNewsItem(apiNews: NewsItem[]) {
   );
 }
 
-export async function fetchCNINews(): Promise<any> {
-  try {
-    const url = "/news";
-    const response = await api.get<NewsApiResponse>(url);
-    return {
-      data: transformNewsApiToNewsItem(response.data.data),
-      total: response.data.total,
-      per_page: response.data.per_page,
-      current_page: response.data.current_page,
-      last_page: response.data.last_page,
-      start: response.data.start,
-      offset: response.data.offset,
-      count: response.data.count,
-    };
-  } catch (error: any) {
-    console.error("[fetchCNINews] Failed:", {
-      message: error.message,
-      status: error.response?.status,
-      data: error.response?.data,
-    });
-    return {
-      data: [],
-      total: 0,
-      per_page: 10,
-      current_page: 1,
-      last_page: 1,
-      start: 1,
-      offset: 0,
-      count: 0,
-    };
-  }
+export async function fetchCNINews(): Promise<NewsApiResponse> {
+  const fallback = {
+    data: [],
+    total: 0,
+    per_page: 10,
+    current_page: 1,
+    last_page: 1,
+    start: 1,
+    offset: 0,
+    count: 0,
+  };
+
+  const data = await safeApiRequest<NewsApiResponse>(
+    api.get("/news"),
+    fallback,
+  );
+
+  return {
+    ...data,
+    data: transformNewsApiToNewsItem(data?.data ?? []) as any,
+  };
 }
 
+export async function getNews() {
+  const data = await fetchCNINews();
+  return data;
+}
+
+// ─────────────────────────────────────────────
+// FAQS
+// ─────────────────────────────────────────────
 export async function getFaqs(organizationId: number = 1): Promise<Faq[]> {
-   const endpoint = `/faqs/${organizationId}`;
-  const fullUrl = `${process.env.NEXT_PUBLIC_API_URL}${endpoint}`;
+  const endpoint = `/faqs/${organizationId}`;
 
-  try {
-    const response = await api.get<FaqApiResponse>(endpoint);
+  const data = await safeApiRequest<FaqApiResponse>(api.get(endpoint), {
+    data: [],
+    total: 0,
+    per_page: 0,
+    current_page: 0,
+    last_page: 0,
+    start: 0,
+    offset: 0,
+    count: 0,
+  });
 
-    return response.data.data;
-  } catch (error: any) {
-    console.error(`[fetchFaqs] ❌ Failed to fetch FAQs from ${fullUrl}`);
-
-    if (error.response) {
-      // Server responded with error status
-      console.error(
-        `[fetchFaqs] HTTP Error ${error.response.status}: ${error.response.statusText}`,
-      );
-      console.error(`[fetchFaqs] Response data:`, error.response.data);
-    } else if (error.request) {
-      // Request was made but no response received
-      console.error(`[fetchFaqs] Network Error: No response received`);
-      console.error(`[fetchFaqs] Request details:`, error.request);
-    } else {
-      // Something else happened
-      console.error(`[fetchFaqs] Error:`, error.message);
-    }
-
-    return [];
-  }
+  return data?.data ?? [];
 }
