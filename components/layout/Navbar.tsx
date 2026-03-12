@@ -6,7 +6,6 @@ import { ChevronDown, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { NavDropdown, type DropdownItem } from "./NavDropdown";
 import Image from "next/image";
-import type { Organization } from "@/lib/types";
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
