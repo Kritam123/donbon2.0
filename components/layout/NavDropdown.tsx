@@ -22,8 +22,8 @@ interface Props {
 export function NavDropdown({ label, href, items, scrolled }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSubmenu, setActiveSubmenu] = useState<string | null>(null);
-  const timeoutRef = useRef<NodeJS.Timeout>();
-  const submenuTimeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout>(null);
+  const submenuTimeoutRef = useRef<NodeJS.Timeout>(null);
 
   const handleMouseEnter = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
