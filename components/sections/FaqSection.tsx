@@ -5,7 +5,6 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ArrowRight, MessageCircleQuestion } from "lucide-react";
 import type { Faq } from "@/lib/types";
-import { getFaqs } from "@/lib/api";
 
 interface FaqItemProps {
   faq: Faq;

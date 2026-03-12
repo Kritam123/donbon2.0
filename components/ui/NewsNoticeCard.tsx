@@ -4,8 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { Calendar, Tag, ArrowRight, Sparkles } from "lucide-react";
 import defaultNewsImg from "@/public/news.png";
-import type { NewsItem } from "@/lib/types";
-import type { NoticeApiItem } from "@/lib/data/news-notices/notices";
+import type { NewsItem, NoticeApiItem } from "@/lib/types";
 import Preview from "./Editor";
 
 type CardItem = NewsItem | NoticeApiItem;

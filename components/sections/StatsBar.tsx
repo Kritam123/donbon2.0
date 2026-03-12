@@ -3,8 +3,6 @@
 import { motion } from "framer-motion";
 import { Building2, CalendarDays, Award, MapPin } from "lucide-react";
 import type { Stat } from "@/lib/types";
-import { useEffect, useState } from "react";
-import { getStats } from "@/lib/api";
 type Props = {
   stats: Stat[];
 };
@@ -16,12 +14,7 @@ const iconMap: Record<string, React.ReactNode> = {
 };
 
 export function StatsBar({ stats }: Props) {
-  // const [stats, setStats] = useState<Stat[]>([]);
-  // useEffect(() => {
-  //   getStats().then((stats) => {
-  //     setStats(stats);
-  //   });
-  // }, []);
+ 
 
   return (
     <section className="relative -mt-20 z-20 px-4 sm:px-6 lg:px-8">
