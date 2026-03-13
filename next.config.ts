@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
- trailingSlash: true,
+  trailingSlash: true,
   images: {
     remotePatterns: [
       {
@@ -18,8 +18,8 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "http",
-        hostname: "dbs-website.ratoguras.com",
-      }
+        hostname: "donbosco-backend.test",
+      },
     ],
   },
 };

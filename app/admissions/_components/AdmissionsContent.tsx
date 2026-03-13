@@ -15,10 +15,23 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { admissionNotice } from "@/lib/data/donbosco/admissions";
+import { AdmissionFeeSettings } from "@/lib/types";
+import { a } from "framer-motion/client";
 
-export function AdmissionsContent() {
+export function AdmissionsContent({
+  admissionFeeSettings,
+}: {
+  admissionFeeSettings?: AdmissionFeeSettings;
+}) {
+  const {
+    admission_classes,
+    annual_fee_components,
+    monthly_fee_classes,
+    monthly_fee_other_charges,
+    proposed_fee_annual,
+    proposed_fee_monthly,
+  } = admissionFeeSettings || {};
   const d = admissionNotice;
-
   return (
     <main className="bg-white">
       {/* ─── Hero ─────────────────────────────────────────────── */}
@@ -166,38 +179,38 @@ export function AdmissionsContent() {
                 </tr>
               </thead>
               <tbody>
-                {d.admissionClasses.map((row, i) => (
+                {admission_classes?.map((row, i) => (
                   <tr
-                    key={row.class}
+                    key={row.id}
                     className={i % 2 === 0 ? "bg-white" : "bg-surface"}
                   >
                     <td className="px-4 py-3 font-bold text-primary-dark whitespace-nowrap">
                       {row.class}
                     </td>
                     <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
-                      {row.dobNotLaterThan}
+                      {row.dob_not_later_than}
                     </td>
                     <td className="px-4 py-3 text-center text-gray-600">
-                      {row.minAge}
+                      {row.min_age}
                     </td>
                     <td className="px-4 py-3 text-center text-gray-600">
-                      {row.requiredAge}
+                      {row.required_age}
                     </td>
                     <td className="px-4 py-3 text-gray-700">
-                      <p>{row.qualificationEn}</p>
+                      <p>{row.qualification_en}</p>
                       <p className="text-xs text-gray-400 mt-0.5">
-                        {row.qualificationNp}
+                        {row.qualification_np}
                       </p>
                     </td>
                     <td className="px-4 py-3 text-gray-700">
-                      <p>{row.selectionEn}</p>
+                      <p>{row.selection_en}</p>
                       <p className="text-xs text-gray-400 mt-0.5">
-                        {row.selectionNp}
+                        {row.selection_np}
                       </p>
                     </td>
                     <td className="px-4 py-3">
                       <ul className="space-y-1">
-                        {row.documentsEn.map((doc, j) => (
+                        {row.documents_en?.map((doc, j) => (
                           <li
                             key={j}
                             className="flex items-start gap-1.5 text-gray-700"
@@ -320,7 +333,7 @@ export function AdmissionsContent() {
                 </tr>
               </thead>
               <tbody>
-                {d.annualFee.components.map((c, i) => (
+                {annual_fee_components?.map((c, i) => (
                   <tr
                     key={i}
                     className={`border-t border-border ${
@@ -329,7 +342,7 @@ export function AdmissionsContent() {
                   >
                     <td className="px-4 py-3 text-gray-700">{c.item}</td>
                     <td className="px-4 py-3 text-right font-medium text-primary-dark">
-                      {c.amountNPR.toLocaleString("en-NP")}.00
+                      {c.amount_npr.toLocaleString("en-NP")}.00
                     </td>
                     <td className="px-4 py-3 text-center text-xs text-gray-500">
                       {c.frequency}
@@ -341,8 +354,8 @@ export function AdmissionsContent() {
                     Total Annual Fee
                   </td>
                   <td className="px-4 py-3 text-right font-bold text-accent">
-                    {d.annualFee.components
-                      .reduce((s, c) => s + c.amountNPR, 0)
+                    {annual_fee_components
+                      ?.reduce((s, c) => s + c.amount_npr, 0)
                       .toLocaleString("en-NP")}
                     .00
                   </td>
@@ -363,7 +376,7 @@ export function AdmissionsContent() {
               </div>
               <table className="min-w-full text-sm">
                 <tbody>
-                  {d.monthlyFee.tuitionFees.map((t, i) => (
+                  {monthly_fee_classes?.map((t, i) => (
                     <tr
                       key={i}
                       className={`border-t border-border ${
@@ -372,7 +385,7 @@ export function AdmissionsContent() {
                     >
                       <td className="px-4 py-3 text-gray-700">{t.classes}</td>
                       <td className="px-4 py-3 text-right font-semibold text-primary-dark">
-                        Rs. {t.amountNPR.toLocaleString("en-NP")}.00
+                        Rs. {t.amount_npr.toLocaleString("en-NP")}.00
                       </td>
                     </tr>
                   ))}
@@ -389,7 +402,7 @@ export function AdmissionsContent() {
               </div>
               <table className="min-w-full text-sm">
                 <tbody>
-                  {d.monthlyFee.otherFees.map((f, i) => (
+                  {monthly_fee_other_charges?.map((f, i) => (
                     <tr
                       key={i}
                       className={`border-t border-border ${
@@ -398,7 +411,7 @@ export function AdmissionsContent() {
                     >
                       <td className="px-4 py-3 text-gray-700">{f.item}</td>
                       <td className="px-4 py-3 text-right font-semibold text-primary-dark whitespace-nowrap">
-                        Rs. {f.amountNPR}.00
+                        Rs. {f.amount_npr}.00
                       </td>
                     </tr>
                   ))}
@@ -534,19 +547,21 @@ export function AdmissionsContent() {
                 </tr>
               </thead>
               <tbody>
-                {d.proposedFeeStructure.monthlyRows.map((r, i) => (
+                {proposed_fee_monthly?.map((r, i) => (
                   <tr
                     key={i}
                     className={`border-t border-border ${
                       i % 2 === 0 ? "bg-white" : "bg-surface"
                     }`}
                   >
-                    <td className="px-4 py-2.5 text-gray-700">{r.classType}</td>
+                    <td className="px-4 py-2.5 text-gray-700">
+                      {r.class_type}
+                    </td>
                     <td className="px-4 py-2.5 text-center text-gray-500 text-xs">
                       {r.frequency}
                     </td>
                     <td className="px-4 py-2.5 text-right font-bold text-primary-dark">
-                      {r.amountNPR.toLocaleString("en-NP")}
+                      {r.amount_npr.toLocaleString("en-NP")}
                     </td>
                   </tr>
                 ))}
@@ -561,7 +576,7 @@ export function AdmissionsContent() {
                   </td>
                 </tr>
 
-                {d.proposedFeeStructure.annualRows.map((r, i) => (
+                {proposed_fee_annual?.map((r, i) => (
                   <tr
                     key={i}
                     className={`border-t border-border ${
@@ -573,7 +588,7 @@ export function AdmissionsContent() {
                       {r.frequency}
                     </td>
                     <td className="px-4 py-2.5 text-right font-bold text-primary-dark">
-                      {r.amountNPR.toLocaleString("en-NP")}
+                      {r.amount_npr.toLocaleString("en-NP")}
                     </td>
                   </tr>
                 ))}

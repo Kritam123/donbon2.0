@@ -412,3 +412,64 @@ export interface FaqApiResponse {
   offset: number;
   count: number;
 }
+export interface AdmissionClass {
+  id: number;
+  class: string;
+  min_age: number;
+  documents_en: string[];
+  documents_np: string[];
+  required_age: string;
+  selection_en: string;
+  selection_np: string;
+  qualification_en: string;
+  qualification_np: string;
+  dob_not_later_than: string;
+  order_index: number;
+}
+
+export interface AnnualFeeComponent {
+  id: number;
+  item: string;
+  frequency: string;
+  amount_npr: number;
+  order_index: number;
+}
+
+export interface MonthlyFeeClass {
+  id: number;
+  classes: string;
+  amount_npr: number;
+  order_index: number;
+}
+
+export interface MonthlyFeeOtherCharge {
+  id: number;
+  item: string;
+  amount_npr: number;
+  order_index: number;
+}
+
+export interface ProposedFeeMonthly {
+  id: number;
+  frequency: string;
+  amount_npr: number;
+  class_type: string;
+  order_index: number;
+}
+
+export interface ProposedFeeAnnual {
+  id: number;
+  item: string;
+  frequency: string;
+  amount_npr: number;
+  order_index: number;
+}
+
+export interface AdmissionFeeSettings {
+  admission_classes: AdmissionClass[];
+  annual_fee_components: AnnualFeeComponent[];
+  monthly_fee_classes: MonthlyFeeClass[];
+  monthly_fee_other_charges: MonthlyFeeOtherCharge[];
+  proposed_fee_monthly: ProposedFeeMonthly[];
+  proposed_fee_annual: ProposedFeeAnnual[];
+}
