@@ -9,6 +9,7 @@ export const metadata = {
 
 export default async function AdmissionsPage() {
   const admissionFeeSettings = await getAdmissionFeeSettings();
+
   return (
     <>
       <AdmissionsContent admissionFeeSettings={admissionFeeSettings} />

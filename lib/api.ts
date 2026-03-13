@@ -608,6 +608,7 @@ export async function getAdmissionFeeSettings(): Promise<
         monthly_fee_other_charges: [],
         proposed_fee_monthly: [],
         proposed_fee_annual: [],
+        total_annual_fee: 0,
       }
     );
   } catch (error: any) {
@@ -623,6 +624,7 @@ export async function getAdmissionFeeSettings(): Promise<
       monthly_fee_other_charges: [],
       proposed_fee_monthly: [],
       proposed_fee_annual: [],
+      total_annual_fee: 0,
     };
   }
 }

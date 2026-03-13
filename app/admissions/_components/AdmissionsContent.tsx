@@ -602,9 +602,9 @@ export function AdmissionsContent({
                     Total (Annual Fees)
                   </td>
                   <td className="px-4 py-3 text-right font-bold text-accent text-base">
-                    {d.proposedFeeStructure.totalAnnualFee.toLocaleString(
-                      "en-NP",
-                    )}
+                    {proposed_fee_annual
+                      ?.reduce((s, c) => s + c.amount_npr, 0)
+                      .toLocaleString("en-NP")}
                   </td>
                 </tr>
 
@@ -617,7 +617,7 @@ export function AdmissionsContent({
                     New Admission Fee 2083 (From Nursery to Class II)
                   </td>
                   <td className="px-4 py-3 text-right font-bold text-accent text-base">
-                    {d.proposedFeeStructure.newAdmissionFee.toLocaleString(
+                    {admissionFeeSettings?.total_annual_fee?.toLocaleString(
                       "en-NP",
                     )}
                   </td>

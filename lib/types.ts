@@ -472,4 +472,5 @@ export interface AdmissionFeeSettings {
   monthly_fee_other_charges: MonthlyFeeOtherCharge[];
   proposed_fee_monthly: ProposedFeeMonthly[];
   proposed_fee_annual: ProposedFeeAnnual[];
+  total_annual_fee: number;
 }
