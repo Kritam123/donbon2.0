@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { getAdmissionFeeSettings } from "@/lib/api";
 import { AdmissionsContent } from "./_components/AdmissionsContent";
 
