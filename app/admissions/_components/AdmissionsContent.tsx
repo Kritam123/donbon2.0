@@ -16,7 +16,6 @@ import {
 } from "lucide-react";
 import { admissionNotice } from "@/lib/data/donbosco/admissions";
 import { AdmissionFeeSettings } from "@/lib/types";
-import { a } from "framer-motion/client";
 
 export function AdmissionsContent({
   admissionFeeSettings,
@@ -617,9 +616,7 @@ export function AdmissionsContent({
                     New Admission Fee 2083 (From Nursery to Class II)
                   </td>
                   <td className="px-4 py-3 text-right font-bold text-accent text-base">
-                    {admissionFeeSettings?.total_annual_fee?.toLocaleString(
-                      "en-NP",
-                    )}
+                    Rs 14,500.00
                   </td>
                 </tr>
               </tbody>
