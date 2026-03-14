@@ -43,6 +43,7 @@ import type {
   BlogsApiResponse,
   NewsNoticeCategory,
   NewsItem,
+  AdmissionFeeSettings,
 } from "./types";
 
 // ─────────────────────────────────────────────
@@ -358,12 +359,15 @@ export async function getOrgNoticeById(
 export async function getAboutStory() {
   try {
     const aboutStory = await api.get("/about-story");
-    return aboutStory.data.data[0] ?? {
-      id: 0,
-      title: "Our Story",
-      content: "Learn about our journey, milestones, and impact over the years.",
-      image: "",
-    };
+    return (
+      aboutStory.data.data[0] ?? {
+        id: 0,
+        title: "Our Story",
+        content:
+          "Learn about our journey, milestones, and impact over the years.",
+        image: "",
+      }
+    );
   } catch (error) {
     console.error(error);
   }
@@ -546,14 +550,15 @@ export async function getBlogs(page: number = 1): Promise<BlogsApiResponse> {
       count: 0,
     };
     return {
-      data: items?.data?.map((item: any) => ({
-        id: item.id,
-        title: item.title || "",
-        description: item.description || "",
-        name: item.name || "",
-        image: item.image || null,
-        start_date: item.start_date || "",
-      })) ?? [],
+      data:
+        items?.data?.map((item: any) => ({
+          id: item.id,
+          title: item.title || "",
+          description: item.description || "",
+          name: item.name || "",
+          image: item.image || null,
+          start_date: item.start_date || "",
+        })) ?? [],
       total: items.total,
       per_page: items.per_page,
       current_page: items.current_page,
@@ -584,4 +589,42 @@ export async function getBlogById(id: number): Promise<BlogItem | undefined> {
 export async function getEventById(id: number): Promise<EventItem | undefined> {
   const events = await getEvents();
   return events.data.find((e) => e.id === id);
+}
+
+// admission-fee-settings
+
+export async function getAdmissionFeeSettings(): Promise<
+  AdmissionFeeSettings | undefined
+> {
+  try {
+    const adminmissionSettingData = await api.get<AdmissionFeeSettings>(
+      "/admission-fee-settings",
+    );
+    return (
+      adminmissionSettingData.data ?? {
+        admission_classes: [],
+        annual_fee_components: [],
+        monthly_fee_classes: [],
+        monthly_fee_other_charges: [],
+        proposed_fee_monthly: [],
+        proposed_fee_annual: [],
+        total_annual_fee: 0,
+      }
+    );
+  } catch (error: any) {
+    console.error("API ERROR:", {
+      message: error?.message,
+      status: error?.response?.status,
+      data: error?.response?.data,
+    });
+    return {
+      admission_classes: [],
+      annual_fee_components: [],
+      monthly_fee_classes: [],
+      monthly_fee_other_charges: [],
+      proposed_fee_monthly: [],
+      proposed_fee_annual: [],
+      total_annual_fee: 0,
+    };
+  }
 }
